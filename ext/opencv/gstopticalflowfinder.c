@@ -1,5 +1,5 @@
 /* GStreamer
- * Copyright (C) 2012 FIXME <fixme@example.com>
+ * Copyright (C) 2012 Francisco Rocha <rocha.francisco.a@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,14 +69,14 @@ static GstStaticPadTemplate gst_optical_flow_finder_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("application/unknown")
+    GST_STATIC_CAPS ("video/x-raw-rgb")
     );
 
 static GstStaticPadTemplate gst_optical_flow_finder_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("application/unknown")
+    GST_STATIC_CAPS ("video/x-raw-rgb")
     );
 
 
@@ -85,23 +85,6 @@ GST_STATIC_PAD_TEMPLATE ("src",
 #define DEBUG_INIT(bla) \
   GST_DEBUG_CATEGORY_INIT (gst_optical_flow_finder_debug_category, "opticalflowfinder", 0, \
       "debug category for opticalflowfinder element");
-
-/* FIXME move details */
-/*
-static void
-gst_optical_flow_finder_base_init (gpointer g_class)
-{
-  GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-
-  gst_element_class_add_pad_template (element_class,
-      gst_static_pad_template_get (&gst_optical_flow_finder_sink_template));
-  gst_element_class_add_pad_template (element_class,
-      gst_static_pad_template_get (&gst_optical_flow_finder_src_template));
-
-  gst_element_class_set_details_simple (element_class, "FIXME Long name",
-      "Generic", "FIXME Description", "FIXME <fixme@example.com>");
-}
-*/
 
 static void
 gst_optical_flow_finder_class_init (GstOpticalFlowFinderClass * klass)
@@ -114,6 +97,17 @@ gst_optical_flow_finder_class_init (GstOpticalFlowFinderClass * klass)
   gobject_class->finalize = gst_optical_flow_finder_finalize;
   element_class->change_state =
       GST_DEBUG_FUNCPTR (gst_optical_flow_finder_change_state);
+
+  gst_element_class_add_pad_template (element_class,
+      gst_static_pad_template_get (&gst_optical_flow_finder_sink_template));
+  gst_element_class_add_pad_template (element_class,
+      gst_static_pad_template_get (&gst_optical_flow_finder_src_template));
+
+  gst_element_class_set_details_simple (element_class,
+      "opticalflowfinder",
+      "Filter/Effect/Video",
+      "Attaches optical flow between frames as metadata",
+      "Francisco Rocha <rocha.francisco.a@gmail.com>");
 }
 
 static void
