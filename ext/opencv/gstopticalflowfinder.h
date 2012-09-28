@@ -22,6 +22,8 @@
 
 #include <gst/gst.h>
 #include <cv.h>
+#include <opencv2/highgui/highgui_c.h>
+#include "gstopencvutils.h"
 
 G_BEGIN_DECLS
 
@@ -40,6 +42,9 @@ struct _GstOpticalFlowFinder
 
   GstPad *sinkpad;
   GstPad *srcpad;
+
+  IplImage *cvImage;
+  CvMemStorage *cvStorage;
 };
 
 struct _GstOpticalFlowFinderClass

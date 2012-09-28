@@ -35,7 +35,6 @@
 #endif
 
 #include <gst/gst.h>
-#include <gst/gst.h>
 #include "gstopticalflowfinder.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_optical_flow_finder_debug_category);
@@ -54,6 +53,8 @@ static void gst_optical_flow_finder_finalize (GObject * object);
 static GstStateChangeReturn gst_optical_flow_finder_change_state (GstElement *
     element, GstStateChange transition);
 
+static gboolean gst_optical_flow_finder_handle_sink_event (GstPad * pad,
+    GstObject * parent, GstEvent * event);
 static GstFlowReturn
 gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
     GstBuffer * buffer);
@@ -69,14 +70,14 @@ static GstStaticPadTemplate gst_optical_flow_finder_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw,format=RGB")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("RGB"))
     );
 
 static GstStaticPadTemplate gst_optical_flow_finder_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw,format=RGB")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("RGB"))
     );
 
 
@@ -89,12 +90,13 @@ GST_STATIC_PAD_TEMPLATE ("src",
 static void
 gst_optical_flow_finder_class_init (GstOpticalFlowFinderClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass *gobject_class = (GObjectClass *) klass;
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
   gobject_class->set_property = gst_optical_flow_finder_set_property;
   gobject_class->get_property = gst_optical_flow_finder_get_property;
-  gobject_class->finalize = gst_optical_flow_finder_finalize;
+  gobject_class->finalize =
+      GST_DEBUG_FUNCPTR (gst_optical_flow_finder_finalize);
   element_class->change_state =
       GST_DEBUG_FUNCPTR (gst_optical_flow_finder_change_state);
 
@@ -103,7 +105,7 @@ gst_optical_flow_finder_class_init (GstOpticalFlowFinderClass * klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_optical_flow_finder_src_template));
 
-  gst_element_class_set_details_simple (element_class,
+  gst_element_class_set_metadata (element_class,
       "opticalflowfinder",
       "Filter/Effect/Video",
       "Attaches optical flow between frames as metadata",
@@ -117,17 +119,21 @@ gst_optical_flow_finder_init (GstOpticalFlowFinder * opticalflowfinder)
   opticalflowfinder->sinkpad =
       gst_pad_new_from_static_template (&gst_optical_flow_finder_sink_template,
       "sink");
+  GST_PAD_SET_PROXY_CAPS (opticalflowfinder->sinkpad);
+  gst_element_add_pad (GST_ELEMENT (opticalflowfinder),
+      opticalflowfinder->sinkpad);
 
+
+  gst_pad_set_event_function (opticalflowfinder->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_optical_flow_finder_handle_sink_event));
   gst_pad_set_chain_function (opticalflowfinder->sinkpad,
       GST_DEBUG_FUNCPTR (gst_optical_flow_finder_sink_chain));
 
-  gst_element_add_pad (GST_ELEMENT (opticalflowfinder),
-      opticalflowfinder->sinkpad);
 
   opticalflowfinder->srcpad =
       gst_pad_new_from_static_template (&gst_optical_flow_finder_src_template,
       "src");
-
+  GST_PAD_SET_PROXY_CAPS (opticalflowfinder->srcpad);
   gst_element_add_pad (GST_ELEMENT (opticalflowfinder),
       opticalflowfinder->srcpad);
 
@@ -160,16 +166,17 @@ gst_optical_flow_finder_get_property (GObject * object, guint property_id,
   }
 }
 
-void
-gst_optical_flow_finder_finalize (GObject * object)
+static void
+gst_optical_flow_finder_finalize (GObject * obj)
 {
-  /* GstOpticalFlowFinder *opticalflowfinder = GST_OPTICAL_FLOW_FINDER (object); */
+  GstOpticalFlowFinder *finder = GST_OPTICAL_FLOW_FINDER (obj);
 
-  /* clean up object here */
+  if (finder->cvImage) {
+    cvReleaseImage (&finder->cvImage);
+  }
 
-  G_OBJECT_CLASS (gst_optical_flow_finder_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gst_optical_flow_finder_parent_class)->finalize (obj);
 }
-
 
 static GstStateChangeReturn
 gst_optical_flow_finder_change_state (GstElement * element,
@@ -211,14 +218,61 @@ gst_optical_flow_finder_change_state (GstElement * element,
   return ret;
 }
 
+static gboolean
+gst_optical_flow_finder_handle_sink_event (GstPad * pad, GstObject * parent,
+    GstEvent * event)
+{
+  GstOpticalFlowFinder *filter;
+  gint width, height;
+  GstStructure *structure;
+  gboolean res = TRUE;
+
+  filter = GST_OPTICAL_FLOW_FINDER (parent);
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_CAPS:
+    {
+      GstCaps *caps;
+      gst_event_parse_caps (event, &caps);
+
+      structure = gst_caps_get_structure (caps, 0);
+      gst_structure_get_int (structure, "width", &width);
+      gst_structure_get_int (structure, "height", &height);
+
+      if (!filter->cvImage) {
+        filter->cvImage =
+            cvCreateImage (cvSize (width, height), IPL_DEPTH_8U, 3);
+        filter->cvStorage = cvCreateMemStorage (0);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  res = gst_pad_event_default (pad, parent, event);
+  return res;
+}
+
+/* Chain function */
 static GstFlowReturn
 gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
     GstBuffer * buffer)
 {
 
+  GstMapInfo map_info;
+  guint8 *data;
   GstOpticalFlowFinder *finder =
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
   g_print ("Have data\n");
+
+  gst_buffer_map (buffer, &map_info, GST_MAP_READ);
+  data = map_info.data;
+
+  finder->cvImage->imageData = (char *) data;
+  cvSaveImage ("/home/frocha/cvImage.png", finder->cvImage, 0);
+
+  gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
 }
 
