@@ -270,7 +270,7 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   data = map_info.data;
 
   finder->cvImage->imageData = (char *) data;
-  cvSaveImage ("/home/frocha/cvImage.png", finder->cvImage, 0);
+  cvSaveImage ("~/cvImage.png", finder->cvImage, 0);
 
   gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
