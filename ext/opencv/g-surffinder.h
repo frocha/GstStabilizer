@@ -3,9 +3,6 @@
 #ifndef __G_SURFFINDER_H__
 #define __G_SURFFINDER_H__
 
-#ifndef CV_NO_BACKWARD_COMPATIBILITY
-#define CV_NO_BACKWARD_COMPATIBILITY
-
 #include "g-finder.h"
 #include <opencv/cv.h>
 
@@ -53,5 +50,3 @@ void g_surffinder_do_something2 (GSURFFinder *self, const gchar* param);
 G_END_DECLS
 
 #endif /* __G_SURFFINDER_H__ */
-
-#endif

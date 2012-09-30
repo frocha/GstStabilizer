@@ -36,6 +36,7 @@
 
 #include <gst/gst.h>
 #include "gstopticalflowfinder.h"
+#include "g-surffinder.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_optical_flow_finder_debug_category);
 #define GST_CAT_DEFAULT gst_optical_flow_finder_debug_category
@@ -266,6 +267,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
   g_print ("Have data\n");
 
+  finder->surf_finder = G_FINDER (g_surffinder_new ());
+  g_finder_optical_flow_image (finder->surf_finder, "I am doing an action");
   gst_buffer_map (buffer, &map_info, GST_MAP_READ);
   data = map_info.data;
 

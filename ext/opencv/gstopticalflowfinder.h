@@ -24,6 +24,7 @@
 #include <cv.h>
 #include <opencv2/highgui/highgui_c.h>
 #include "gstopencvutils.h"
+#include "g-finder.h"
 
 G_BEGIN_DECLS
 
@@ -45,6 +46,8 @@ struct _GstOpticalFlowFinder
 
   IplImage *cvImage;
   CvMemStorage *cvStorage;
+
+  GFinder *surf_finder;
 };
 
 struct _GstOpticalFlowFinderClass
