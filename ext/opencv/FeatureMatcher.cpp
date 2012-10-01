@@ -62,6 +62,35 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                           IplImage* image1,
                           matchingpair **matches)
 {
-    int ret = 0;
-    return ret;
+    // Feature detection
+	std::vector<cv::KeyPoint> keypoints0;
+	std::vector<cv::KeyPoint> keypoints1;
+
+	cv::SurfFeatureDetector surf(FM_SURF_THRESHOLD);
+
+	surf.detect(image0,keypoints0);
+	surf.detect(image1,keypoints1);
+
+	std::cout << "Number of SURF points 0: " << keypoints0.size() << std::endl;
+	std::cout << "Number of SURF points 1: " << keypoints1.size() << std::endl;
+
+    // Feature description
+	cv::SurfDescriptorExtractor surfDesc;
+
+	cv::Mat descriptors0, descriptors1;
+	surfDesc.compute(image0,keypoints0,descriptors0);
+	surfDesc.compute(image1,keypoints1,descriptors1);
+
+	std::cout << "Descriptor 0 size: " << descriptors0.rows << " by " << descriptors0.cols << std::endl;
+	std::cout << "Descriptor 1 size: " << descriptors1.rows << " by " << descriptors1.cols << std::endl;
+
+    // Feature matching
+	cv::BruteForceMatcher<cv::L2<float> > matcher;
+
+	std::vector<cv::DMatch> descMatches;
+	matcher.match(descriptors0,descriptors1, descMatches);
+
+	std::cout << "Found " << descMatches.size() << " matched descriptors." << std::endl;
+
+	return 0;
 }
