@@ -50,20 +50,20 @@
 struct instanceOfFM
 {
   int id;
-  FeatureMacher *fm;
+  FeatureMatcher *fm;
 };
 vector < instanceOfFM > featurematchervector;
 vector < int >featurematcherfreeids;
 
-int searchIdx (int p_id);
+int search_idx (int p_id);
 extern "C"
 {
 #endif
 
   int feature_matcher_init ();
-  int findMatchingSURFKeypoints(IplImage* image0,
-                                IplImage* image1*,
-                                std::vector<cv::DMatch> *matches,
+  int find_matching_surf_keypoints(IplImage* image0,
+                                IplImage* image1,
+                                matchingpair **matches,
                                 int p_id);
   void feature_matcher_free (int p_id);
 

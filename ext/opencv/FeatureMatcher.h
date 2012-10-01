@@ -44,6 +44,7 @@
 #define FEATUREMATCHER_H_
 
 #include <cv.h>                 // includes OpenCV definitions
+#include <glib.h>
 
 //FeatureMatcher defines
 #define FM_SURF_THRESHOLD 1000
@@ -51,7 +52,10 @@
 using namespace std;
 
 //FeatureMatcher structs
-// struct {
+typedef struct {
+    int idx0;
+    int idx1;
+} matchingpair;
 
 
 //FeatureMatcher class
@@ -65,7 +69,7 @@ public:
   // public methods
   int findMatchingSURFKeypoints(IplImage* image0,
                                 IplImage* image1,
-                                std::vector<cv::DMatch> *matches);
+                                matchingpair **matches);
 
 private:
 

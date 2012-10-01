@@ -40,6 +40,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* This breaks the build for reasons that aren't entirely clear to me yet */
 //#if 0
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -59,7 +60,7 @@ FeatureMatcher::~FeatureMatcher ()
 int
 FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                           IplImage* image1,
-                          std::vector<cv::DMatch> *matches)
+                          matchingpair **matches)
 {
     int ret = 0;
     return ret;
