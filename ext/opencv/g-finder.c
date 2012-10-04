@@ -4,8 +4,6 @@
 /* include other impl specific header files */
 
 /* 'private'/'protected' functions */
-static void g_finder_class_init (GFinderClass * klass);
-static void g_finder_init (GFinder * obj);
 static void g_finder_finalize (GObject * obj);
 
 /* list signals  */

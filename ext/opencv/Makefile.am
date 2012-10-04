@@ -20,7 +20,9 @@ libgstopencv_la_SOURCES = gstopencv.c \
 			gstmotioncells.c \
 			motioncells_wrapper.cpp \
 			MotionCells.cpp \
-			gstopticalflowfinder.c
+			gstopticalflowfinder.c \
+			g-finder.c \
+			g-surffinder.c
 
 libgstopencv_la_CXXFLAGS = $(GST_CXXFLAGS) $(OPENCV_CFLAGS)
 
@@ -57,4 +59,6 @@ noinst_HEADERS = gstopencvvideofilter.h gstopencvutils.h \
 		gstmotioncells.h \
 		motioncells_wrapper.h \
 		MotionCells.h \
-		gstopticalflowfinder.h
+		gstopticalflowfinder.h \
+		g-finder.h \
+		g-surffinder.h
