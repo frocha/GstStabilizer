@@ -4,10 +4,7 @@
 /* include other impl specific header files */
 
 /* 'private'/'protected' functions */
-static void g_surffinder_class_init (GSURFFinderClass * klass);
-static void g_surffinder_init (GSURFFinder * obj);
 static void g_surffinder_finalize (GObject * obj);
-static void g_suffinder_get_surf (GSURFFinder * self, IplImage * image);
 
 /* list signals  */
 enum
@@ -37,6 +34,7 @@ static void
 g_surffinder_class_init (GSURFFinderClass * klass)
 {
   GObjectClass *gobject_class;
+  GFinderClass *gfinder_class;
   gobject_class = (GObjectClass *) klass;
 
   gobject_class->finalize = g_surffinder_finalize;
@@ -50,7 +48,7 @@ g_surffinder_class_init (GSURFFinderClass * klass)
 /*		g_signal_new ("my_signal_2",....); */
 /*	etc. */
 
-  GFinderClass *gfinder_class = (GFinderClass *) klass;
+  gfinder_class = (GFinderClass *) klass;
   gfinder_class->optical_flow_image = (void *) g_surffinder_do_something2;
 }
 
@@ -83,24 +81,4 @@ void
 g_surffinder_do_something2 (GSURFFinder * self, const gchar * param)
 {
   g_message ("GSURFFinder: %s", param);
-}
-
-static void
-g_suffinder_get_surf (GSURFFinder * self, IplImage * image)
-{
-  /* Convert the RGB image obtained from camera into Grayscale */
-  /* FIXME the default color format in OpenCV is BGR. */
-  IplImage *image_gray = cvCreateImage (cvGetSize (image), IPL_DEPTH_8U, 1);
-  cvCvtColor (image, image_gray, CV_RGB2GRAY);
-
-  CvMemStorage *storage = cvCreateMemStorage (0);
-  CvSeq *imageKeypoints = 0, *imageDescriptors = 0;
-  CvSURFParams params = cvSURFParams (1000, 1);
-  cvExtractSURF (image_gray, 0, &imageKeypoints, &imageDescriptors, storage,
-      params, 0);
-  /* FIXME printf("Image Descriptors: %d\n", imageDescriptors->total); */
-
-  free (image_gray);
-  free (storage);
-  /* FIXME shape */
 }
