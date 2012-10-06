@@ -43,9 +43,7 @@ GType        g_surffinder_get_type    (void) G_GNUC_CONST;
 GSURFFinder*    g_surffinder_new         (void);
 
 /* other public functions */
-void g_surffinder_do_something2 (GSURFFinder *self, const gchar* param);
-/*	gboolean   g_surffinder_has_foo      (GSURFFinder *self, gint value); */
-
+void g_surffinder_optical_flow_image (GSURFFinder *self, IplImage* image0, IplImage* image1);
 
 G_END_DECLS
 

@@ -49,7 +49,7 @@ g_surffinder_class_init (GSURFFinderClass * klass)
 /*	etc. */
 
   gfinder_class = (GFinderClass *) klass;
-  gfinder_class->optical_flow_image = (void *) g_surffinder_do_something2;
+  gfinder_class->optical_flow_image = (void *) g_surffinder_optical_flow_image;
 }
 
 static void
@@ -75,10 +75,10 @@ g_surffinder_new (void)
 }
 
 /* following: other function implementations */
-/* such as g_surffinder_do_something, or g_surffinder_has_foo */
 
 void
-g_surffinder_do_something2 (GSURFFinder * self, const gchar * param)
+g_surffinder_optical_flow_image (GSURFFinder * self, IplImage * image0,
+    IplImage * image1)
 {
-  g_message ("GSURFFinder: %s", param);
+  g_message ("GSURFFinder: OPTICAL FLOW IMAGE");
 }

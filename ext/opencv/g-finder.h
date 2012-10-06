@@ -4,6 +4,7 @@
 #define __G_FINDER_H__
 
 #include <glib-object.h>
+#include <cv.h>
 /* other include files */
 
 G_BEGIN_DECLS
@@ -34,7 +35,7 @@ struct _GFinderClass {
 	/* void (* my_event) (GFinder* obj); */
 
 	/* virtual public method */
-    void (*optical_flow_image) (GFinder *self, const gchar* param);
+    void (*optical_flow_image) (GFinder *self, IplImage* image0, IplImage* image1);
 };
 
 /* member functions */
@@ -45,9 +46,7 @@ GType        g_finder_get_type    (void) G_GNUC_CONST;
 GFinder*    g_finder_new         (void);
 
 /* fill in other public functions */
-void g_finder_do_something (GFinder *self, const gchar* param);
-/*	gboolean   g_finder_has_foo      (GFinder *self, gint value); */
-void g_finder_optical_flow_image (GFinder *self, const gchar* param);
+void g_finder_optical_flow_image (GFinder *self, IplImage* image0, IplImage* image1);
 
 G_END_DECLS
 

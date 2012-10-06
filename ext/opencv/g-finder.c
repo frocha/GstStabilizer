@@ -48,7 +48,7 @@ g_finder_class_init (GFinderClass * klass)
 /*		g_signal_new ("my_signal_2",....); */
 /*	etc. */
 
-  klass->optical_flow_image = g_finder_do_something;
+  klass->optical_flow_image = g_finder_optical_flow_image;
 }
 
 static void
@@ -74,19 +74,12 @@ g_finder_new (void)
 }
 
 /* following: other function implementations */
-/* such as g_finder_do_something, or g_finder_has_foo */
 
 void
-g_finder_do_something (GFinder * self, const gchar * param)
-{
-  g_message ("GFinder: %s", param);
-}
-
-
-void
-g_finder_optical_flow_image (GFinder * self, const gchar * param)
+g_finder_optical_flow_image (GFinder * self, IplImage * image0,
+    IplImage * image1)
 {
   g_return_if_fail (G_IS_FINDER (self));
 
-  G_FINDER_GET_CLASS (self)->optical_flow_image (self, param);
+  G_FINDER_GET_CLASS (self)->optical_flow_image (self, image0, image1);
 }

@@ -270,7 +270,7 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   g_print ("Have data\n");
 
   finder->surf_finder = G_FINDER (g_surffinder_new ());
-  g_finder_optical_flow_image (finder->surf_finder, "I am doing an action");
+  g_finder_optical_flow_image (finder->surf_finder, NULL, NULL);
   gst_buffer_map (buffer, &map_info, GST_MAP_READ);
   data = map_info.data;
 
