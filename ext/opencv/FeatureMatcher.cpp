@@ -48,6 +48,7 @@
 //#endif
 
 #include "FeatureMatcher.h"
+#include <opencv2/highgui/highgui.hpp>
 
 FeatureMatcher::FeatureMatcher ()
 {
@@ -92,6 +93,22 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
 	matcher.match(descriptors0,descriptors1, descMatches);
 
 	std::cout << "Found " << descMatches.size() << " matched descriptors." << std::endl;
+
+    // Draw matches
+	// Keep the best 25 matches to plot
+	std::nth_element(descMatches.begin(),
+		             descMatches.begin()+24,
+					 descMatches.end());
+	descMatches.erase(descMatches.begin()+25, descMatches.end());
+
+	cv::Mat imageMatches;
+	cv::drawMatches(image0,keypoints0,
+		            image1,keypoints1,
+					descMatches,
+					imageMatches,
+					cv::Scalar(255,255,255)); // color of the lines
+
+    cv::imwrite("~/matches.jpg", imageMatches);
 
 	return 0;
 }
