@@ -63,7 +63,8 @@ extern "C"
   int feature_matcher_init ();
   int find_matching_surf_keypoints(IplImage* image0,
                                 IplImage* image1,
-                                matchingpair **matches,
+                                CvSeq **keypoints0,
+                                CvSeq **keypoints1,
                                 int p_id);
   void feature_matcher_free (int p_id);
 

@@ -91,7 +91,8 @@ search_idx (int p_id)
 int
 find_matching_surf_keypoints(IplImage* image0,
                                 IplImage* image1,
-                                matchingpair **matches,
+                                CvSeq **keypoints0,
+                                CvSeq **keypoints1,
                                 int p_id)
 {
     int ret = 0;
