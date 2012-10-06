@@ -262,6 +262,7 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
 {
 
   int ret;
+  IplImage *imgTemp = NULL;
   GstMapInfo map_info;
   guint8 *data;
   GstOpticalFlowFinder *finder =
@@ -274,8 +275,10 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   data = map_info.data;
 
   finder->cvImage->imageData = (char *) data;
-  ret = cvSaveImage ("~/cvImage.png", finder->cvImage, 0);
-  g_print ("cvSaveImage returns = %d", ret);
+  imgTemp = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
+  cvCvtColor (finder->cvImage, imgTemp, CV_RGB2BGR);
+  ret = cvSaveImage ("~/cvImage.jpg", imgTemp, 0);
+  g_print ("cvSaveImage returns = %d\n", ret);
 
   gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
