@@ -61,8 +61,8 @@ FeatureMatcher::~FeatureMatcher ()
 int
 FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                                           IplImage* image1,
-                                          std::vector<cv::KeyPoint> keypointsImg0,
-                                          std::vector<cv::KeyPoint> keypointsImg1)
+                                          std::vector<cv::KeyPoint> &keypointsImg0,
+                                          std::vector<cv::KeyPoint> &keypointsImg1)
 {
     // Feature detection
 	std::vector<cv::KeyPoint> keypoints0;

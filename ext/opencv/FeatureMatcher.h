@@ -64,8 +64,8 @@ public:
   // public methods
   int findMatchingSURFKeypoints(IplImage* image0,
                                 IplImage* image1,
-                                std::vector<cv::KeyPoint> keypointsImg0,
-                                std::vector<cv::KeyPoint> keypointsImg1);
+                                std::vector<cv::KeyPoint> &keypointsImg0,
+                                std::vector<cv::KeyPoint> &keypointsImg1);
 
 private:
 
