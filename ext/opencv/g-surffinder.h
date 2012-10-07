@@ -24,6 +24,7 @@ typedef struct _GSURFFinderPrivate         GSURFFinderPrivate;
 
 struct _GSURFFinder {
 	 GFinder parent;
+	 int id;
 	/* public members, if any */
 
 	/* private */

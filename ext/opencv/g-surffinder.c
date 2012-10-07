@@ -1,6 +1,8 @@
 /* g-surffinder.c */
 
 #include "g-surffinder.h"
+#include "featurematcher_wrapper.h"
+
 /* include other impl specific header files */
 
 /* 'private'/'protected' functions */
@@ -57,6 +59,7 @@ g_surffinder_init (GSURFFinder * obj)
 {
   obj->_priv = G_SURFFINDER_GET_PRIVATE (obj);
 
+  obj->id = feature_matcher_init ();
 /* init any of the private data */
   obj->_priv->_frobnicate_mode = FALSE;
 }
@@ -64,7 +67,9 @@ g_surffinder_init (GSURFFinder * obj)
 static void
 g_surffinder_finalize (GObject * obj)
 {
-/*	free/unref instance resources here */
+  /*  free/unref instance resources here */
+  GSURFFinder *finder = G_SURFFINDER (obj);
+  feature_matcher_free (finder->id);
   G_OBJECT_CLASS (parent_class)->finalize (obj);
 }
 
@@ -74,11 +79,19 @@ g_surffinder_new (void)
   return G_SURFFINDER (g_object_new (G_TYPE_SURFFINDER, NULL));
 }
 
-/* following: other function implementations */
-
+/* TODO Add resulting matching keypoints to signature */
 void
 g_surffinder_optical_flow_image (GSURFFinder * self, IplImage * image0,
     IplImage * image1)
 {
-  g_message ("GSURFFinder: OPTICAL FLOW IMAGE");
+  CvSeq **keypoints0 = NULL;
+  CvSeq **keypoints1 = NULL;
+  int res;
+  g_debug ("GSURFFinder: Optical Flow Image");
+  res = find_matching_surf_keypoints (image0, image1,
+      keypoints0, keypoints1, self->id);
+  if (res != 0) {
+    g_debug ("GSURFinder: Error retrieving matching keypoints");
+    return;
+  }
 }

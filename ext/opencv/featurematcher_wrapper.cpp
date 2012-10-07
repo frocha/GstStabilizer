@@ -107,7 +107,7 @@ find_matching_surf_keypoints(IplImage* image0,
     if (ret != 0) {
 	std::cout << "ERROR retrieving matching keypoints" << std::endl;
     } else {
-        // Adapt keypoint vector to CvSeq
+        /* TODO adapt keypoint vector to CvSeq of CvPoint, CvSURFPoint ? */
     }
     return ret;
 }

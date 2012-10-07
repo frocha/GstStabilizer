@@ -50,6 +50,8 @@
 #include "FeatureMatcher.h"
 #include <opencv2/highgui/highgui.hpp>
 
+# define FM_DEBUG_MATCHES 1
+
 FeatureMatcher::FeatureMatcher ()
 {
 }
@@ -94,21 +96,23 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
 
 	std::cout << "Found " << descMatches.size() << " matched descriptors." << std::endl;
 
-    // Draw matches
-	// Keep the best 25 matches to plot
-	std::nth_element(descMatches.begin(),
-		             descMatches.begin()+24,
-					 descMatches.end());
-	descMatches.erase(descMatches.begin()+25, descMatches.end());
+    if (FM_DEBUG_MATCHES) {
+        // Draw matches
+        // Keep the best 25 matches to plot
+        std::nth_element(descMatches.begin(),
+                         descMatches.begin()+24,
+                         descMatches.end());
+        descMatches.erase(descMatches.begin()+25, descMatches.end());
 
-	cv::Mat imageMatches;
-	cv::drawMatches(image0,keypoints0,
-		            image1,keypoints1,
-					descMatches,
-					imageMatches,
-					cv::Scalar(255,255,255)); // color of the lines
+        cv::Mat imageMatches;
+        cv::drawMatches(image0,keypoints0,
+                        image1,keypoints1,
+                        descMatches,
+                        imageMatches,
+                        cv::Scalar(255,255,255)); // color of the lines
 
-    cv::imwrite("~/matches.jpg", imageMatches);
+        cv::imwrite("~/matches.jpg", imageMatches);
+    }
 
 	return 0;
 }
