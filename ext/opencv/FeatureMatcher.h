@@ -47,7 +47,7 @@
 #include <glib.h>
 
 //FeatureMatcher defines
-#define FM_SURF_THRESHOLD 1000
+#define FM_SURF_THRESHOLD 3000
 
 using namespace std;
 

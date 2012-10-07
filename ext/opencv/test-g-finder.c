@@ -1,12 +1,16 @@
-#include "../g-finder.h"
-#include "../g-surffinder.h"
+#include "g-finder.h"
+#include "g-surffinder.h"
 #include <opencv2/highgui/highgui_c.h>
 
-int
-showImage ()
+
+void showImage (void);
+
+void
+showImage (void)
 {
+  IplImage *img;
   cvNamedWindow ("test", 1);
-  IplImage *img = cvLoadImage ("church01.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+  img = cvLoadImage ("image1.jpg", CV_LOAD_IMAGE_GRAYSCALE);
   cvShowImage ("test", img);
   while (1) {
     if (cvWaitKey (100) == 27)
@@ -14,20 +18,22 @@ showImage ()
   }
   cvDestroyWindow ("test");
   cvReleaseImage (&img);
-  return (0);
 }
 
 int
 main (int argc, char *argv[])
 {
 
+  GFinder *finder;
+  IplImage *image0;
+  IplImage *image1;
+
   g_type_init ();
 
-  GFinder *finder;
   finder = G_FINDER (g_surffinder_new ());
 
-  IplImage *image0 = cvLoadImage ("church01.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-  IplImage *image1 = cvLoadImage ("church02.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+  image0 = cvLoadImage ("image1.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+  image1 = cvLoadImage ("image2.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
   g_finder_optical_flow_image (finder, image0, image1);
 

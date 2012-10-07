@@ -97,8 +97,7 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
 	std::cout << "Found " << descMatches.size() << " matched descriptors." << std::endl;
 
     if (FM_DEBUG_MATCHES) {
-        // Draw matches
-        // Keep the best 25 matches to plot
+        // Draw the best 25 matches
         std::nth_element(descMatches.begin(),
                          descMatches.begin()+24,
                          descMatches.end());
@@ -111,7 +110,10 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                         imageMatches,
                         cv::Scalar(255,255,255)); // color of the lines
 
-        cv::imwrite("~/matches.jpg", imageMatches);
+        cv::imwrite("/var/tmp/matches.jpg", imageMatches);
+        /*cv::namedWindow("Matches");
+        cv::imshow("Matches",imageMatches);
+        cv::waitKey();*/
     }
 
 	return 0;
