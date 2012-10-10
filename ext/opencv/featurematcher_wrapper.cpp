@@ -98,12 +98,12 @@ find_matching_surf_keypoints(IplImage* image0,
     int ret = 0;
     int idx = 0;
     idx = search_idx ( p_id);
-    std::vector<cv::KeyPoint> keypointsImg0;
-    std::vector<cv::KeyPoint> keypointsImg1;
+    std::vector<cv::Point2f> matched_points0;
+    std::vector<cv::Point2f> matched_points1;
     ret = featurematchervector.at (idx).fm -> findMatchingSURFKeypoints (image0,
                                                                          image1,
-                                                                         keypointsImg0,
-                                                                         keypointsImg1);
+                                                                         matched_points0,
+                                                                         matched_points1);
     if (ret != 0) {
 	std::cout << "ERROR retrieving matching keypoints" << std::endl;
     } else {

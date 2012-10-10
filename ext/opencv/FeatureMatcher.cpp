@@ -63,8 +63,8 @@ FeatureMatcher::~FeatureMatcher ()
 int
 FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                                           IplImage* image1,
-                                          std::vector<cv::KeyPoint> &keypointsImg0,
-                                          std::vector<cv::KeyPoint> &keypointsImg1)
+                                          std::vector<cv::Point2f> &matched_keypoints0,
+                                          std::vector<cv::Point2f> &matched_keypoints1)
 {
     // Feature detection
 	std::vector<cv::KeyPoint> keypoints0;
@@ -116,5 +116,22 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
         cv::waitKey();*/
     }
 
+    // Rearrange keypoints so that matched ones share index
+    std::vector<cv::KeyPoint> keypoints_img0;
+    std::vector<cv::KeyPoint> keypoints_img1;
+    for( int i = 0; i < (int) descMatches.size(); i++ )
+    {
+        keypoints_img0.push_back( keypoints0[ descMatches[i].queryIdx ] );
+        keypoints_img1.push_back( keypoints1[ descMatches[i].trainIdx ] );
+    }
+
+    // TODO Filter keypoints with diverging angles
+
+    // Return only the coordinates of each keypoint
+    for( int i = 0; i < (int) descMatches.size(); i++ )
+    {
+        matched_keypoints0.push_back( keypoints0[ descMatches[i].queryIdx ].pt );
+        matched_keypoints1.push_back( keypoints1[ descMatches[i].trainIdx ].pt );
+    }
 	return 0;
 }
