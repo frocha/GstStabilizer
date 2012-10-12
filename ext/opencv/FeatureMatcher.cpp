@@ -114,8 +114,16 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
         /*cv::namedWindow("Matches");
         cv::imshow("Matches",imageMatches);
         cv::waitKey();*/
+        for( int i = 0; i < (int) descMatches.size(); i++ )
+        {
+            std::cout << i << ": (" << keypoints0[ descMatches[i].queryIdx ].pt.x
+                << ", " << keypoints0[ descMatches[i].queryIdx ].pt.y << ")" << std::endl;
+            std::cout << i << ": (" << keypoints1[ descMatches[i].queryIdx ].pt.x
+                << ", " << keypoints1[ descMatches[i].queryIdx ].pt.y << ")" << std::endl;
+        }
     }
 
+	std::cout << "Rearranging matched keypoints." << std::endl;
     // Rearrange keypoints so that matched ones share index
     std::vector<cv::KeyPoint> keypoints_img0;
     std::vector<cv::KeyPoint> keypoints_img1;

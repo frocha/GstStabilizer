@@ -91,8 +91,8 @@ search_idx (int p_id)
 int
 find_matching_surf_keypoints(IplImage* image0,
                                 IplImage* image1,
-                                CvSeq **keypoints0,
-                                CvSeq **keypoints1,
+                                CvPoint2D32f** keypoints0,
+                                CvPoint2D32f** keypoints1,
                                 int p_id)
 {
     int ret = 0;
@@ -105,11 +105,24 @@ find_matching_surf_keypoints(IplImage* image0,
                                                                          matched_points0,
                                                                          matched_points1);
     if (ret != 0) {
-	std::cout << "ERROR retrieving matching keypoints" << std::endl;
+        std::cout << "ERROR retrieving matching keypoints" << std::endl;
     } else {
-        /* TODO adapt keypoint vector to CvSeq of CvPoint, CvSURFPoint ? */
+        std::cout << "wrapper: Number of retrieved matching keypoints: "
+            << matched_points0.size() << std::endl;
+        *keypoints0 = (CvPoint2D32f*) malloc ( matched_points0.size() * sizeof(CvPoint2D32f) );
+        *keypoints1 = (CvPoint2D32f*) malloc ( matched_points1.size() * sizeof(CvPoint2D32f) );
+        for( int i = 0; i < (int) matched_points0.size(); i++ )
+        {
+            std::cout << "wrapper: assigning point " << i << "; x = " << matched_points0[i].x
+                << "; y = " << matched_points0[i].y << std::endl;
+            *keypoints0[i] = cvPoint2D32f(matched_points0[i].x, matched_points0[i].y);
+            std::cout << "wrapper: assigned." << std::endl;
+            CvPoint2D32f point1 = cvPoint2D32f(matched_points1[i].x, matched_points1[i].y);
+            *keypoints1[i] = point1;
+        }
+        std::cout << "wrapper: generated array from vector of keypoints." << std::endl;
     }
-    return ret;
+    return 0;
 }
 
 void
