@@ -24,7 +24,8 @@ libgstopencv_la_SOURCES = gstopencv.c \
 			FeatureMatcher.cpp \
 			featurematcher_wrapper.cpp \
 			g-finder.c \
-			g-surffinder.c
+			g-surffinder.c \
+			oflowmeta.c
 
 libgstopencv_la_CXXFLAGS = $(GST_CXXFLAGS) $(OPENCV_CFLAGS)
 
@@ -65,4 +66,5 @@ noinst_HEADERS = gstopencvvideofilter.h gstopencvutils.h \
 		FeatureMatcher.h \
 		featurematcher_wrapper.h \
 		g-finder.h \
-		g-surffinder.h
+		g-surffinder.h \
+		oflowmeta.h
