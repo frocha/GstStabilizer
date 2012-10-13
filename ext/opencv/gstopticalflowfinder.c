@@ -24,7 +24,7 @@
  * <refsect2>
  * <title>Example launch line</title>
  * |[
- * gst-launch -v fakesrc ! opticalflowfinder ! FIXME ! fakesink
+ * gst-launch-1.0 -v filesrc location=<my-video> ! decodebin ! videoconvert ! opticalflowfinder ! videoconvert ! xvimagesink
  * ]|
  * FIXME Describe what the pipeline does.
  * </refsect2>
