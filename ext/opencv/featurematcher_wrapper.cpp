@@ -117,8 +117,7 @@ find_matching_surf_keypoints(IplImage* image0,
                 << "; y = " << matched_points0[i].y << std::endl;
             *keypoints0[i] = cvPoint2D32f(matched_points0[i].x, matched_points0[i].y);
             std::cout << "wrapper: assigned." << std::endl;
-            CvPoint2D32f point1 = cvPoint2D32f(matched_points1[i].x, matched_points1[i].y);
-            *keypoints1[i] = point1;
+            *keypoints1[i] = cvPoint2D32f(matched_points1[i].x, matched_points1[i].y);
         }
         std::cout << "wrapper: generated array from vector of keypoints." << std::endl;
     }
