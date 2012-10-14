@@ -65,6 +65,7 @@
 
 #include "gstopencvutils.h"
 #include "gstflowdrawer.h"
+#include <math.h>
 
 GST_DEBUG_CATEGORY_STATIC (gst_flow_drawer_debug);
 #define GST_CAT_DEFAULT gst_opencv_flow_drawer_debug
@@ -127,6 +128,12 @@ static gboolean gst_flow_drawer_handle_sink_event (GstPad * pad,
     GstObject * parent, GstEvent * event);
 static GstFlowReturn gst_flow_drawer_chain (GstPad * pad,
     GstObject * parent, GstBuffer * buf);
+
+/* private methods prototypes */
+void gst_flow_drawer_draw_arrow (GstFlowDrawer * drawer,
+    CvPoint2D32f origin, CvPoint2D32f end);
+int gst_flow_drawer_compute_arrow_points (GstFlowDrawer * drawer,
+    CvPoint origin, CvPoint end, CvPoint * c, CvPoint * d);
 
 /* Clean up */
 static void
@@ -376,6 +383,7 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   GstFlowDrawer *filter;
   GstMapInfo map_info;
   guint8 *data;
+  CvPoint2D32f origin, end;
 
   filter = GST_FLOW_DRAWER (parent);
 
@@ -392,10 +400,77 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
           filter->ypos), &(filter->font), cvScalar (filter->colorR,
           filter->colorG, filter->colorB, 0));
 
+  /* cvLine ( filter->cvImage, cvPoint(10, 10), cvPoint(100, 100),
+     CV_RGB (0, 0, 255), 3, 8, 0); */
+  origin = cvPoint2D32f (10.0, 10.0);
+  end = cvPoint2D32f (100.0, 100.0);
+  gst_flow_drawer_draw_arrow (filter, origin, end);
+
   gst_buffer_unmap (buf, &map_info);
   return gst_pad_push (filter->srcpad, buf);
 }
 
+void
+gst_flow_drawer_draw_arrow (GstFlowDrawer * drawer,
+    CvPoint2D32f origin, CvPoint2D32f end)
+{
+  CvPoint c, d;
+  int ret;
+
+  CvPoint int_origin = cvPointFrom32f (origin);
+  CvPoint int_end = cvPointFrom32f (end);
+  cvLine (drawer->cvImage, int_origin, int_end, CV_RGB (0, 0, 255), 3, 8, 0);
+
+  ret =
+      gst_flow_drawer_compute_arrow_points (drawer, int_origin, int_end, &c,
+      &d);
+  if (ret != -1) {
+    cvLine (drawer->cvImage, int_end, c, CV_RGB (0, 0, 255), 3, 8, 0);
+    cvLine (drawer->cvImage, int_end, d, CV_RGB (0, 0, 255), 3, 8, 0);
+  }
+}
+
+int
+gst_flow_drawer_compute_arrow_points (GstFlowDrawer * drawer,
+    CvPoint origin, CvPoint end, CvPoint * c, CvPoint * d)
+{
+  /* The arrow tip is made by joining the end of the arrow (xb, yb) to C and D. This method
+     computes the coordinates of C and D. */
+
+  /* FIXME should be members */
+  float pi = 4.0 * atan (1.0);
+  float alpha = pi / 6.0;
+  float cos_alpha = cos (alpha);
+  float sin_alpha = sin (alpha);
+
+  float xa = origin.x, ya = origin.y;
+  float xb = end.x, yb = end.y;
+  float xc, yc;
+  float xd, yd;
+  float length = 20.0;
+
+  float cos_beta;
+  float sin_beta;
+  float ab_distance = sqrt (pow (xb - xa, 2) + pow (yb - ya, 2));
+  if (ab_distance == 0.0)
+    return -1;
+  cos_beta = (xa - xb) / ab_distance;
+  sin_beta = (ya - yb) / ab_distance;
+
+  xc = xb + length * (cos_alpha * cos_beta - sin_alpha * sin_beta);
+  yc = yb + length * (sin_beta * cos_alpha + sin_alpha * cos_beta);
+
+  xd = xb + length * (cos_alpha * cos_beta + sin_alpha * sin_beta);
+  yd = yb + length * (sin_beta * cos_alpha - sin_alpha * cos_beta);
+
+  c->x = xc;
+  c->y = yc;
+
+  d->x = xd;
+  d->y = yd;
+
+  return 0;
+}
 
 /* entry point to initialize the plug-in
  * initialize the plug-in itself
