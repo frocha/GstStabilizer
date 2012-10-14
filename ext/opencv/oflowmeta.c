@@ -43,6 +43,8 @@ o_flow_meta_init (GstMeta * meta, gpointer params, GstBuffer * buffer)
 
   emeta->num = 0;
   emeta->name = NULL;
+  emeta->points0 = NULL;
+  emeta->points1 = NULL;
 
   return TRUE;
 }
@@ -54,7 +56,8 @@ o_flow_meta_transform (GstBuffer * transbuf, GstMeta * meta,
   OFlowMeta *emeta = (OFlowMeta *) meta;
 
   /* we always copy no matter what transform */
-  gst_buffer_add_o_flow_meta (transbuf, emeta->num, emeta->name);
+  gst_buffer_add_o_flow_meta (transbuf, emeta->num, emeta->name, emeta->points0,
+      emeta->points1);
 
   return TRUE;
 }
@@ -66,6 +69,12 @@ o_flow_meta_free (GstMeta * meta, GstBuffer * buffer)
 
   g_free (emeta->name);
   emeta->name = NULL;
+
+  g_free (emeta->points0);
+  emeta->points0 = NULL;
+
+  g_free (emeta->points1);
+  emeta->points1 = NULL;
 }
 
 const GstMetaInfo *
@@ -86,7 +95,8 @@ o_flow_meta_get_info (void)
 }
 
 OFlowMeta *
-gst_buffer_add_o_flow_meta (GstBuffer * buffer, gint num, const gchar * name)
+gst_buffer_add_o_flow_meta (GstBuffer * buffer, gint num, const gchar * name,
+    CvPoint2D32f * points0, CvPoint2D32f * points1)
 {
   OFlowMeta *meta;
 
@@ -96,6 +106,9 @@ gst_buffer_add_o_flow_meta (GstBuffer * buffer, gint num, const gchar * name)
 
   meta->num = num;
   meta->name = g_strdup (name);
+  /* FIXME copy contents instead of assigning pointers? */
+  meta->points0 = points0;
+  meta->points1 = points1;
 
   return meta;
 }

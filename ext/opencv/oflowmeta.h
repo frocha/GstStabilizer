@@ -26,6 +26,7 @@
 #endif
 
 #include <gst/gst.h>
+#include <cv.h>
 
 G_BEGIN_DECLS
 
@@ -38,6 +39,8 @@ struct _OFlowMeta {
 
     gint num;
     gchar *name;
+    CvPoint2D32f *points0;
+    CvPoint2D32f *points1;
 };
 
 GType o_flow_meta_api_get_type (void);
@@ -53,7 +56,9 @@ const GstMetaInfo *o_flow_meta_get_info (void);
 
 OFlowMeta * gst_buffer_add_o_flow_meta (GstBuffer *buffer,
                                         gint num,
-                                        const gchar *name);
+                                        const gchar *name,
+                                        CvPoint2D32f *points0,
+                                        CvPoint2D32f *points1);
 
 G_END_DECLS
 
