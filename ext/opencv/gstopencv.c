@@ -37,6 +37,7 @@
 #include "gsttemplatematch.h"
 #include "gsttextoverlay.h"
 #include "gstopticalflowfinder.h"
+#include "gstflowdrawer.h"
 
 static gboolean
 plugin_init (GstPlugin * plugin)
@@ -81,6 +82,9 @@ plugin_init (GstPlugin * plugin)
     return FALSE;
 
   if (!gst_optical_flow_finder_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_flow_drawer_plugin_init (plugin))
     return FALSE;
 
   return TRUE;
