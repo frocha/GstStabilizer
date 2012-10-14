@@ -35,6 +35,7 @@ gst-plugins-bad-*.tar.*
 *.la
 *.o
 *~
+*.swp
 /m4
 Makefile.in
 Makefile
