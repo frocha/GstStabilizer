@@ -88,6 +88,7 @@ g_surffinder_optical_flow_image (GSURFFinder * self, IplImage * image0,
   CvPoint2D32f *keypoints1 = 0;
   int res;
   int keypoint_length;
+  int i;
   g_print ("GSURFFinder: Optical Flow Image\n");
   res = find_matching_surf_keypoints (image0, image1,
       &keypoints0, &keypoints1, self->id);
@@ -95,12 +96,8 @@ g_surffinder_optical_flow_image (GSURFFinder * self, IplImage * image0,
   if (res != 0) {
     g_print ("GSURFinder: Error retrieving matching keypoints\n");
     return;
-
   } else {
-    keypoint_length = sizeof (keypoints0) / sizeof (keypoints0[0]);
-    g_print ("GSURFinder: Size of keypoints0 %ld \n", sizeof (keypoints0));
-    g_print ("GSURFinder: Size of keypoints0[0] %ld \n",
-        sizeof (keypoints0[0]));
-    g_print ("GSURFinder: Retrieved %d matching keypoints\n", keypoint_length);
+    for (i = 0; i < 25; i++)
+      g_print ("%d: (%f, %f)\n", i, keypoints0[i].x, keypoints0[i].y);
   }
 }
