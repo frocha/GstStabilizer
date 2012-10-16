@@ -81,23 +81,22 @@ g_surffinder_new (void)
 
 /* TODO Add resulting matching keypoints to signature */
 void
-g_surffinder_optical_flow_image (GSURFFinder * self, IplImage * image0,
-    IplImage * image1)
+g_surffinder_optical_flow_image (GSURFFinder * self,
+    IplImage * image0,
+    IplImage * image1,
+    CvPoint2D32f ** keypoints0, CvPoint2D32f ** keypoints1, int *n_matches)
 {
-  CvPoint2D32f *keypoints0 = 0;
-  CvPoint2D32f *keypoints1 = 0;
   int res;
-  int keypoint_length;
   int i;
   g_print ("GSURFFinder: Optical Flow Image\n");
   res = find_matching_surf_keypoints (image0, image1,
-      &keypoints0, &keypoints1, self->id);
-  g_print ("GSURFinder: Retrieved matching keypoints\n");
+      keypoints0, keypoints1, n_matches, self->id);
   if (res != 0) {
     g_print ("GSURFinder: Error retrieving matching keypoints\n");
     return;
   } else {
+    g_print ("GSURFinder: Retrieved matching keypoints\n");
     for (i = 0; i < 25; i++)
-      g_print ("%d: (%f, %f)\n", i, keypoints0[i].x, keypoints0[i].y);
+      g_print ("%d: (%f, %f)\n", i, ((*keypoints0)[i]).x, ((*keypoints0)[i]).y);
   }
 }

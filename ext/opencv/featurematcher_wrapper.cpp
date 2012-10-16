@@ -93,6 +93,7 @@ find_matching_surf_keypoints(IplImage* image0,
                                 IplImage* image1,
                                 CvPoint2D32f** keypoints0,
                                 CvPoint2D32f** keypoints1,
+                                int *n_matches,
                                 int p_id)
 {
     int ret = 0;
@@ -120,6 +121,7 @@ find_matching_surf_keypoints(IplImage* image0,
             (*keypoints1)[i] = cvPoint2D32f(matched_points1[i].x, matched_points1[i].y);
         }
         std::cout << "wrapper: generated array from vector of keypoints." << std::endl;
+        *n_matches = (int) matched_points0.size();
     }
     return 0;
 }

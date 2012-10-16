@@ -77,9 +77,11 @@ g_finder_new (void)
 
 void
 g_finder_optical_flow_image (GFinder * self, IplImage * image0,
-    IplImage * image1)
+    IplImage * image1, CvPoint2D32f ** keypoints0, CvPoint2D32f ** keypoints1,
+    int *n_matches)
 {
   g_return_if_fail (G_IS_FINDER (self));
 
-  G_FINDER_GET_CLASS (self)->optical_flow_image (self, image0, image1);
+  G_FINDER_GET_CLASS (self)->optical_flow_image (self, image0, image1,
+      keypoints0, keypoints1, n_matches);
 }

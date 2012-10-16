@@ -44,8 +44,12 @@ GType        g_surffinder_get_type    (void) G_GNUC_CONST;
 GSURFFinder*    g_surffinder_new         (void);
 
 /* other public functions */
-void g_surffinder_optical_flow_image (GSURFFinder *self, IplImage* image0, IplImage* image1);
-
+void g_surffinder_optical_flow_image (GSURFFinder * self,
+                                      IplImage * image0,
+                                      IplImage * image1,
+                                      CvPoint2D32f **keypoints0,
+                                      CvPoint2D32f **keypoints1,
+                                      int* n_matches);
 G_END_DECLS
 
 #endif /* __G_SURFFINDER_H__ */

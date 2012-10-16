@@ -65,6 +65,7 @@ extern "C"
                                 IplImage* image1,
                                 CvPoint2D32f** keypoints0,
                                 CvPoint2D32f** keypoints1,
+                                int *n_matches,
                                 int p_id);
   void feature_matcher_free (int p_id);
 

@@ -35,7 +35,9 @@ struct _GFinderClass {
 	/* void (* my_event) (GFinder* obj); */
 
 	/* virtual public method */
-    void (*optical_flow_image) (GFinder *self, IplImage* image0, IplImage* image1);
+    void (*optical_flow_image) (GFinder *self, IplImage* image0, IplImage* image1,
+                                CvPoint2D32f **keypoints0, CvPoint2D32f **keypoints1,
+                                int *n_matches);
 };
 
 /* member functions */
@@ -46,7 +48,9 @@ GType        g_finder_get_type    (void) G_GNUC_CONST;
 GFinder*    g_finder_new         (void);
 
 /* fill in other public functions */
-void g_finder_optical_flow_image (GFinder *self, IplImage* image0, IplImage* image1);
+void g_finder_optical_flow_image (GFinder *self, IplImage* image0, IplImage* image1,
+                                  CvPoint2D32f **keypoints0, CvPoint2D32f **keypoints1,
+                                  int *n_matches);
 
 G_END_DECLS
 
