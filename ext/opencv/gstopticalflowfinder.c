@@ -37,6 +37,7 @@
 #include <gst/gst.h>
 #include "gstopticalflowfinder.h"
 #include "g-surffinder.h"
+#include "oflowmeta.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_optical_flow_finder_debug_category);
 #define GST_CAT_DEFAULT gst_optical_flow_finder_debug_category
@@ -265,6 +266,7 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   IplImage *previousImage = NULL;
   GstMapInfo map_info;
   guint8 *data;
+  OFlowMeta *meta;
   GstOpticalFlowFinder *finder =
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
 
@@ -292,7 +294,10 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   if (imgTemp) {
     cvReleaseImage (&imgTemp);
   }
-  /* TODO create metadata */
+
+  meta = gst_buffer_add_o_flow_meta (buffer, 96, NULL, NULL, NULL);
+  meta->num = 47;
+
   gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
 }

@@ -66,6 +66,7 @@
 #include "gstopencvutils.h"
 #include "gstflowdrawer.h"
 #include <math.h>
+#include "oflowmeta.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_flow_drawer_debug);
 #define GST_CAT_DEFAULT gst_opencv_flow_drawer_debug
@@ -384,6 +385,7 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   GstMapInfo map_info;
   guint8 *data;
   CvPoint2D32f origin, end;
+  OFlowMeta *meta;
 
   filter = GST_FLOW_DRAWER (parent);
 
@@ -405,6 +407,12 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   origin = cvPoint2D32f (10.0, 10.0);
   end = cvPoint2D32f (100.0, 100.0);
   gst_flow_drawer_draw_arrow (filter, origin, end);
+
+
+  meta = gst_buffer_get_o_flow_meta (buf);
+  if (meta) {
+    g_print ("flowdrawer: Received meta = %d\n", meta->num);
+  }
 
   gst_buffer_unmap (buf, &map_info);
   return gst_pad_push (filter->srcpad, buf);
