@@ -263,10 +263,15 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
 {
 
   IplImage *imgTemp = NULL;
+  IplImage *imgTemp2 = NULL;
   IplImage *previousImage = NULL;
   GstMapInfo map_info;
   guint8 *data;
   OFlowMeta *meta;
+  /* Should be private */
+  GFinder *surf_finder;
+  CvPoint2D32f *keypoints0 = NULL, *keypoints1 = NULL;
+  int n_matches;
   GstOpticalFlowFinder *finder =
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
 
@@ -281,13 +286,14 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   cvSaveImage ("/var/tmp/cvPreviousImage.jpg", imgTemp, 0);
 
   finder->cvImage->imageData = (char *) data;
-  imgTemp = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
-  cvCvtColor (finder->cvImage, imgTemp, CV_RGB2BGR);
-  cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp, 0);
+  imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
+  cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
+  cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
 
-  /* if previous image not null */
-  /* finder->surf_finder = G_FINDER (g_surffinder_new ()); */
-  /* g_finder_optical_flow_image (finder->surf_finder, NULL, NULL); */
+  surf_finder = G_FINDER (g_surffinder_new ());
+  g_finder_optical_flow_image (surf_finder,
+      imgTemp, imgTemp2, &keypoints0, &keypoints1, &n_matches);
+
   if (previousImage) {
     cvReleaseImage (&previousImage);
   }
@@ -297,6 +303,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
 
   meta = gst_buffer_add_o_flow_meta (buffer, 96, NULL, NULL, NULL);
   meta->num = 47;
+  meta->points0 = keypoints0;
+  meta->points1 = keypoints1;
 
   gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
