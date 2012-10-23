@@ -224,12 +224,9 @@ static gboolean
 gst_optical_flow_finder_handle_sink_event (GstPad * pad, GstObject * parent,
     GstEvent * event)
 {
-  GstOpticalFlowFinder *filter;
   gint width, height;
   GstStructure *structure;
   gboolean res = TRUE;
-
-  filter = GST_OPTICAL_FLOW_FINDER (parent);
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_CAPS:
@@ -241,11 +238,6 @@ gst_optical_flow_finder_handle_sink_event (GstPad * pad, GstObject * parent,
       gst_structure_get_int (structure, "width", &width);
       gst_structure_get_int (structure, "height", &height);
 
-      if (!filter->cvImage) {
-        filter->cvImage =
-            cvCreateImage (cvSize (width, height), IPL_DEPTH_8U, 3);
-        filter->cvStorage = cvCreateMemStorage (0);
-      }
       break;
     }
     default:
@@ -278,21 +270,41 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   gst_buffer_map (buffer, &map_info, GST_MAP_READ);
   data = map_info.data;
 
-  previousImage = cvCreateImage (cvGetSize (finder->cvImage),
-      finder->cvImage->depth, finder->cvImage->nChannels);
-  cvCopy (finder->cvImage, previousImage, NULL);
-  imgTemp = cvCreateImage (cvGetSize (previousImage), IPL_DEPTH_8U, 3);
-  cvCvtColor (previousImage, imgTemp, CV_RGB2BGR);
-  cvSaveImage ("/var/tmp/cvPreviousImage.jpg", imgTemp, 0);
+  if (!finder->cvImage) {
+    finder->cvImage = cvCreateImage (cvSize (320, 240), IPL_DEPTH_8U, 3);
+    finder->cvStorage = cvCreateMemStorage (0);
 
-  finder->cvImage->imageData = (char *) data;
-  imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
-  cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
-  cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
+    finder->cvImage->imageData = (char *) data;
+    imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
+    cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
+    cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
+  } else {
+    previousImage = cvCreateImage (cvGetSize (finder->cvImage),
+        finder->cvImage->depth, finder->cvImage->nChannels);
+    cvCopy (finder->cvImage, previousImage, NULL);
+    imgTemp = cvCreateImage (cvGetSize (previousImage), IPL_DEPTH_8U, 3);
+    cvCvtColor (previousImage, imgTemp, CV_RGB2BGR);
+    cvSaveImage ("/var/tmp/cvPreviousImage.jpg", imgTemp, 0);
 
-  surf_finder = G_FINDER (g_surffinder_new ());
-  g_finder_optical_flow_image (surf_finder,
-      imgTemp, imgTemp2, &keypoints0, &keypoints1, &n_matches);
+    finder->cvImage->imageData = (char *) data;
+    imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
+    cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
+    cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
+
+    surf_finder = G_FINDER (g_surffinder_new ());
+    g_finder_optical_flow_image (surf_finder,
+        imgTemp, imgTemp2, &keypoints0, &keypoints1, &n_matches);
+
+    g_print ("gstopticalflowfinder: n_matches = %d\n", n_matches);
+    for (int i = 0; i < n_matches; i++)
+      g_print ("gstopticalflowfinder: %d: (%f, %f)\n", i, (keypoints0[i]).x,
+          (keypoints0[i]).y);
+
+    meta = gst_buffer_add_o_flow_meta (buffer, 96, NULL, NULL, NULL);
+    meta->num = 47;
+    meta->points0 = keypoints0;
+    meta->points1 = keypoints1;
+  }
 
   if (previousImage) {
     cvReleaseImage (&previousImage);
@@ -300,11 +312,6 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   if (imgTemp) {
     cvReleaseImage (&imgTemp);
   }
-
-  meta = gst_buffer_add_o_flow_meta (buffer, 96, NULL, NULL, NULL);
-  meta->num = 47;
-  meta->points0 = keypoints0;
-  meta->points1 = keypoints1;
 
   gst_buffer_unmap (buffer, &map_info);
   return gst_pad_push (finder->srcpad, buffer);
