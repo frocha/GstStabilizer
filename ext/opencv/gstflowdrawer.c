@@ -412,6 +412,10 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   meta = gst_buffer_get_o_flow_meta (buf);
   if (meta) {
     g_print ("flowdrawer: Received meta = %d\n", meta->num);
+    g_print ("gstflowdrawer: n_matches = %d\n", meta->num);
+    for (int i = 0; i < meta->num; i++)
+      g_print ("gstflowdrawer: %d: (%f, %f)\n", i, (meta->points0[i]).x,
+          (meta->points0[i]).y);
   }
 
   gst_buffer_unmap (buf, &map_info);
