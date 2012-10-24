@@ -106,9 +106,9 @@ gst_buffer_add_o_flow_meta (GstBuffer * buffer, gint num, const gchar * name,
 
   meta->num = num;
   meta->name = g_strdup (name);
-  /* FIXME copy contents instead of assigning pointers? */
-  meta->points0 = points0;
-  meta->points1 = points1;
+  meta->points0 = g_memdup (points0, num * sizeof (CvPoint2D32f));
+  meta->points1 = g_memdup (points1, num * sizeof (CvPoint2D32f));
+
 
   return meta;
 }

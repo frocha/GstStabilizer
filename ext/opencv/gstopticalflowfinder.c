@@ -301,8 +301,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
           (keypoints0[i]).y);
 
     meta =
-        gst_buffer_add_o_flow_meta (buffer, 1, "opticalflow", keypoints0,
-        keypoints1);
+        gst_buffer_add_o_flow_meta (buffer, n_matches, "opticalflow",
+        keypoints0, keypoints1);
     meta->num = n_matches;
   }
 
