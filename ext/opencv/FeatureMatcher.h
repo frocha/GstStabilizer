@@ -72,6 +72,9 @@ private:
   // private methods
 
   // private variables
+  cv::SurfFeatureDetector *surf;
+  cv::SurfDescriptorExtractor *surfDesc;
+  cv::BruteForceMatcher<cv::L2<float> > *matcher;
 
 };
 
