@@ -135,6 +135,9 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
     // TODO Filter keypoints with diverging angles
 
     // Return only the coordinates of each keypoint
+    // FIXME This needs to be improved by avoiding the following for loop.
+    // A vector of Keypoints must be returned and the coordinates filtered
+    // in the feature matcher.
     for( int i = 0; i < (int) descMatches.size(); i++ )
     {
         matched_keypoints0.push_back( keypoints0[ descMatches[i].queryIdx ].pt );

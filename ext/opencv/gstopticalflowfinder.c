@@ -140,6 +140,7 @@ gst_optical_flow_finder_init (GstOpticalFlowFinder * opticalflowfinder)
       opticalflowfinder->srcpad);
 
 
+  opticalflowfinder->surf_finder = G_FINDER (g_surffinder_new ());
 }
 
 void
@@ -224,9 +225,11 @@ static gboolean
 gst_optical_flow_finder_handle_sink_event (GstPad * pad, GstObject * parent,
     GstEvent * event)
 {
-  gint width, height;
   GstStructure *structure;
   gboolean res = TRUE;
+  GstOpticalFlowFinder *finder;
+
+  finder = GST_OPTICAL_FLOW_FINDER (parent);
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_CAPS:
@@ -235,8 +238,8 @@ gst_optical_flow_finder_handle_sink_event (GstPad * pad, GstObject * parent,
       gst_event_parse_caps (event, &caps);
 
       structure = gst_caps_get_structure (caps, 0);
-      gst_structure_get_int (structure, "width", &width);
-      gst_structure_get_int (structure, "height", &height);
+      gst_structure_get_int (structure, "width", &(finder->width));
+      gst_structure_get_int (structure, "height", &(finder->height));
 
       break;
     }
@@ -261,7 +264,6 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   guint8 *data;
   OFlowMeta *meta;
   /* Should be private */
-  GFinder *surf_finder;
   CvPoint2D32f *keypoints0 = NULL, *keypoints1 = NULL;
   int n_matches;
   GstOpticalFlowFinder *finder =
@@ -271,7 +273,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   data = map_info.data;
 
   if (!finder->cvImage) {
-    finder->cvImage = cvCreateImage (cvSize (320, 240), IPL_DEPTH_8U, 3);
+    finder->cvImage =
+        cvCreateImage (cvSize (finder->width, finder->height), IPL_DEPTH_8U, 3);
     finder->cvStorage = cvCreateMemStorage (0);
 
     finder->cvImage->imageData = (char *) data;
@@ -291,8 +294,7 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
     cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
     cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
 
-    surf_finder = G_FINDER (g_surffinder_new ());
-    g_finder_optical_flow_image (surf_finder,
+    g_finder_optical_flow_image (finder->surf_finder,
         imgTemp, imgTemp2, &keypoints0, &keypoints1, &n_matches);
 
     g_print ("gstopticalflowfinder: n_matches = %d\n", n_matches);

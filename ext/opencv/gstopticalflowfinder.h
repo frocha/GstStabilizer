@@ -47,6 +47,7 @@ struct _GstOpticalFlowFinder
   IplImage *cvImage;
   CvMemStorage *cvStorage;
 
+  gint width, height;
   GFinder *surf_finder;
 };
 
