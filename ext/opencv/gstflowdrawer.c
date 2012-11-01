@@ -386,6 +386,7 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   guint8 *data;
   CvPoint2D32f origin, end;
   OFlowMeta *meta;
+  IplImage *imgTemp;
 
   filter = GST_FLOW_DRAWER (parent);
 
@@ -418,6 +419,10 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
       gst_flow_drawer_draw_arrow (filter, meta->points0[i], meta->points1[i]);
     }
   }
+
+  imgTemp = cvCreateImage (cvGetSize (filter->cvImage), IPL_DEPTH_8U, 3);
+  cvCvtColor (filter->cvImage, imgTemp, CV_RGB2BGR);
+  cvSaveImage ("/var/tmp/cvFlowImage.jpg", imgTemp, 0);
 
   gst_buffer_unmap (buf, &map_info);
   return gst_pad_push (filter->srcpad, buf);

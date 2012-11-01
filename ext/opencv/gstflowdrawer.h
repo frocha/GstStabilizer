@@ -49,6 +49,7 @@
 
 #include <gst/gst.h>
 #include "gstopencvutils.h"
+#include <opencv2/highgui/highgui_c.h>
 G_BEGIN_DECLS
 
 #define GST_TYPE_FLOW_DRAWER \

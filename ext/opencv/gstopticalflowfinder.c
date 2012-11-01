@@ -271,7 +271,6 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
 
   gst_buffer_map (buffer, &map_info, GST_MAP_READ);
   data = map_info.data;
-
   if (!finder->cvImage) {
     finder->cvImage =
         cvCreateImage (cvSize (finder->width, finder->height), IPL_DEPTH_8U, 3);
