@@ -269,6 +269,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   GstOpticalFlowFinder *finder =
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
 
+  GST_DEBUG ("\nCHAIN CALLED");
+
   gst_buffer_map (buffer, &map_info, GST_MAP_READ);
   data = map_info.data;
   if (!finder->cvImage) {

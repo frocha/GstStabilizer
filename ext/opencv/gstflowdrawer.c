@@ -384,7 +384,7 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   GstFlowDrawer *filter;
   GstMapInfo map_info;
   guint8 *data;
-  CvPoint2D32f origin, end;
+  /* CvPoint2D32f origin, end; */
   OFlowMeta *meta;
   IplImage *imgTemp;
 
@@ -399,15 +399,15 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
       0, filter->thickness, 0);
 
   buf = gst_buffer_make_writable (buf);
-  cvPutText (filter->cvImage, filter->textbuf, cvPoint (filter->xpos,
-          filter->ypos), &(filter->font), cvScalar (filter->colorR,
-          filter->colorG, filter->colorB, 0));
+  /* cvPutText (filter->cvImage, filter->textbuf, cvPoint (filter->xpos,
+     filter->ypos), &(filter->font), cvScalar (filter->colorR,
+     filter->colorG, filter->colorB, 0));
 
-  /* cvLine ( filter->cvImage, cvPoint(10, 10), cvPoint(100, 100),
-     CV_RGB (0, 0, 255), 3, 8, 0); */
-  origin = cvPoint2D32f (10.0, 10.0);
-  end = cvPoint2D32f (100.0, 100.0);
-  gst_flow_drawer_draw_arrow (filter, origin, end);
+     cvLine ( filter->cvImage, cvPoint(10, 10), cvPoint(100, 100),
+     CV_RGB (0, 0, 255), 3, 8, 0);
+     origin = cvPoint2D32f (10.0, 10.0);
+     end = cvPoint2D32f (100.0, 100.0);
+     gst_flow_drawer_draw_arrow (filter, origin, end); */
 
 
   meta = gst_buffer_get_o_flow_meta (buf);

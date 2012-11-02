@@ -110,7 +110,7 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                         image1,keypoints1,
                         descMatches,
                         imageMatches,
-                        cv::Scalar(255,255,255)); // color of the lines
+                        cv::Scalar(0,0,255)); // color of the lines
 
         cv::imwrite("/var/tmp/matches.jpg", imageMatches);
         for( int i = 0; i < (int) descMatches.size(); i++ )
