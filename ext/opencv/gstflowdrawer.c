@@ -387,6 +387,8 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   /* CvPoint2D32f origin, end; */
   OFlowMeta *meta;
   IplImage *imgTemp;
+  gchar *my_string;
+  gchar *frameFileName;
 
   filter = GST_FLOW_DRAWER (parent);
 
@@ -414,15 +416,22 @@ gst_flow_drawer_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
   if (meta) {
     g_print ("gstflowdrawer: n_matches = %d\n", meta->num);
     for (int i = 0; i < meta->num; i++) {
-      g_print ("gstflowdrawer: %d: (%f, %f)\n", i, (meta->points0[i]).x,
+      g_print ("gstflowdrawer 0: %d: (%f, %f)\n", i, (meta->points0[i]).x,
           (meta->points0[i]).y);
+      g_print ("gstflowdrawer 1: %d: (%f, %f)\n", i, (meta->points1[i]).x,
+          (meta->points1[i]).y);
       gst_flow_drawer_draw_arrow (filter, meta->points0[i], meta->points1[i]);
     }
   }
 
+  my_string = g_strdup_printf ("%i", filter->i);
   imgTemp = cvCreateImage (cvGetSize (filter->cvImage), IPL_DEPTH_8U, 3);
   cvCvtColor (filter->cvImage, imgTemp, CV_RGB2BGR);
-  cvSaveImage ("/var/tmp/cvFlowImage.jpg", imgTemp, 0);
+  frameFileName = g_strconcat ("/var/tmp/cvFlowImage", my_string, ".jpg", NULL);
+  cvSaveImage (frameFileName, imgTemp, 0);
+  g_free (frameFileName);
+  g_free (my_string);
+  (filter->i)++;
 
   gst_buffer_unmap (buf, &map_info);
   return gst_pad_push (filter->srcpad, buf);

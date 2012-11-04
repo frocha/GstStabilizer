@@ -114,8 +114,10 @@ find_matching_surf_keypoints(IplImage* image0,
         *keypoints1 = (CvPoint2D32f*) malloc ( matched_points1.size() * sizeof(CvPoint2D32f) );
         for( int i = 0; i < (int) matched_points0.size(); i++ )
         {
-            std::cout << "wrapper: assigning point " << i << "; x = " << matched_points0[i].x
+            std::cout << "wrapper: assigning point 0: " << i << "; x = " << matched_points0[i].x
                 << "; y = " << matched_points0[i].y << std::endl;
+            std::cout << "wrapper: assigning point 1: " << i << "; x = " << matched_points1[i].x
+                << "; y = " << matched_points1[i].y << std::endl;
             (*keypoints0)[i] = cvPoint2D32f(matched_points0[i].x, matched_points0[i].y);
             std::cout << "wrapper: assigned." << std::endl;
             (*keypoints1)[i] = cvPoint2D32f(matched_points1[i].x, matched_points1[i].y);

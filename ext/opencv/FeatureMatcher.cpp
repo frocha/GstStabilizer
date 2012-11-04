@@ -117,8 +117,8 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
         {
             std::cout << i << ": (" << keypoints0[ descMatches[i].queryIdx ].pt.x
                 << ", " << keypoints0[ descMatches[i].queryIdx ].pt.y << ")" << std::endl;
-            std::cout << i << ": (" << keypoints1[ descMatches[i].queryIdx ].pt.x
-                << ", " << keypoints1[ descMatches[i].queryIdx ].pt.y << ")" << std::endl;
+            std::cout << i << ": (" << keypoints1[ descMatches[i].trainIdx ].pt.x
+                << ", " << keypoints1[ descMatches[i].trainIdx ].pt.y << ")" << std::endl;
         }
     }
 

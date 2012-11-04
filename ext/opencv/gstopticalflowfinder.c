@@ -141,6 +141,7 @@ gst_optical_flow_finder_init (GstOpticalFlowFinder * opticalflowfinder)
 
 
   opticalflowfinder->surf_finder = G_FINDER (g_surffinder_new ());
+  opticalflowfinder->i = 0;
 }
 
 void
@@ -266,6 +267,8 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
   /* Should be private */
   CvPoint2D32f *keypoints0 = NULL, *keypoints1 = NULL;
   int n_matches;
+  gchar *my_string;
+  gchar *frameFileName;
   GstOpticalFlowFinder *finder =
       GST_OPTICAL_FLOW_FINDER (GST_OBJECT_PARENT (pad));
 
@@ -281,19 +284,38 @@ gst_optical_flow_finder_sink_chain (GstPad * pad, GstObject * parent,
     finder->cvImage->imageData = (char *) data;
     imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
     cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
-    cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
+    /* Save current frame */
+    my_string = g_strdup_printf ("%i", finder->i);
+    frameFileName = g_strconcat ("/var/tmp/cvImage", my_string, ".jpg", NULL);
+    GST_DEBUG ("\nSaving file: %s", frameFileName);
+    cvSaveImage (frameFileName, imgTemp2, 0);
+    g_free (my_string);
+    g_free (frameFileName);
+    (finder->i)++;
   } else {
+    my_string = g_strdup_printf ("%i", finder->i);
+
     previousImage = cvCreateImage (cvGetSize (finder->cvImage),
         finder->cvImage->depth, finder->cvImage->nChannels);
     cvCopy (finder->cvImage, previousImage, NULL);
     imgTemp = cvCreateImage (cvGetSize (previousImage), IPL_DEPTH_8U, 3);
     cvCvtColor (previousImage, imgTemp, CV_RGB2BGR);
-    cvSaveImage ("/var/tmp/cvPreviousImage.jpg", imgTemp, 0);
+    /* Save previous frame */
+    frameFileName =
+        g_strconcat ("/var/tmp/cvPreviousImage", my_string, ".jpg", NULL);
+    cvSaveImage (frameFileName, imgTemp, 0);
+    g_free (frameFileName);
 
     finder->cvImage->imageData = (char *) data;
     imgTemp2 = cvCreateImage (cvGetSize (finder->cvImage), IPL_DEPTH_8U, 3);
     cvCvtColor (finder->cvImage, imgTemp2, CV_RGB2BGR);
-    cvSaveImage ("/var/tmp/cvImage.jpg", imgTemp2, 0);
+    /* Save current frame */
+    frameFileName = g_strconcat ("/var/tmp/cvImage", my_string, ".jpg", NULL);
+    GST_DEBUG ("\nSaving file: %s", frameFileName);
+    cvSaveImage (frameFileName, imgTemp2, 0);
+    g_free (frameFileName);
+    (finder->i)++;
+    g_free (my_string);
 
     g_finder_optical_flow_image (finder->surf_finder,
         imgTemp, imgTemp2, &keypoints0, &keypoints1, &n_matches);

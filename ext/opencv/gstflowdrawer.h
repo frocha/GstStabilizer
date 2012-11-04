@@ -83,6 +83,7 @@ struct _GstFlowDrawer
   gdouble height;
   gdouble width;
   gchar *textbuf;
+  gint i;
 
 };
 

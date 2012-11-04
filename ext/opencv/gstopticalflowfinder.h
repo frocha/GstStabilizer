@@ -49,6 +49,7 @@ struct _GstOpticalFlowFinder
 
   gint width, height;
   GFinder *surf_finder;
+  gint i;
 };
 
 struct _GstOpticalFlowFinderClass
