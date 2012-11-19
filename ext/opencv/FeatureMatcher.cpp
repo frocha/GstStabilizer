@@ -49,6 +49,7 @@
 
 #include "FeatureMatcher.h"
 #include <opencv2/highgui/highgui.hpp>
+#include <gst/gst.h>
 
 # define FM_DEBUG_MATCHES 1
 
@@ -72,6 +73,7 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                                           std::vector<cv::Point2f> &matched_keypoints0,
                                           std::vector<cv::Point2f> &matched_keypoints1)
 {
+    GST_DEBUG (">>> Feature Matcher \n");
     // Feature detection
 	std::vector<cv::KeyPoint> keypoints0;
 	std::vector<cv::KeyPoint> keypoints1;
@@ -113,6 +115,7 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
                         cv::Scalar(0,0,255)); // color of the lines
 
         cv::imwrite("/var/tmp/matches.jpg", imageMatches);
+
         for( int i = 0; i < (int) descMatches.size(); i++ )
         {
             std::cout << i << ": (" << keypoints0[ descMatches[i].queryIdx ].pt.x
@@ -143,5 +146,13 @@ FeatureMatcher::findMatchingSURFKeypoints(IplImage* image0,
         matched_keypoints0.push_back( keypoints0[ descMatches[i].queryIdx ].pt );
         matched_keypoints1.push_back( keypoints1[ descMatches[i].trainIdx ].pt );
     }
+
+    cv::Mat imageKeypoints;
+    cv::drawKeypoints(image0,keypoints_img0,
+                      imageKeypoints,
+                      cv::Scalar(0,0,255),
+                      4);
+    cv::imwrite("/var/tmp/keypoints.jpg", imageKeypoints);
+
 	return 0;
 }

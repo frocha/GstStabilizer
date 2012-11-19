@@ -2,6 +2,7 @@
 
 #include "g-surffinder.h"
 #include "featurematcher_wrapper.h"
+#include <gst/gst.h>
 
 /* include other impl specific header files */
 
@@ -89,6 +90,7 @@ g_surffinder_optical_flow_image (GSURFFinder * self,
   int res;
   int i;
   g_print ("GSURFFinder: Optical Flow Image\n");
+  GST_DEBUG (">>> SURF Finder \n");
   res = find_matching_surf_keypoints (image0, image1,
       keypoints0, keypoints1, n_matches, self->id);
   if (res != 0) {
