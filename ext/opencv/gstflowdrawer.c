@@ -44,19 +44,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/**
- * SECTION:element-opencvtextoverlay
- *
- * opencvtextoverlay renders the text on top of the video frames
- *
- * <refsect2>
- * <title>Example launch line</title>
- * |[
- * gst-launch-1.0 videotestsrc ! videoconvert ! opencvtextoverlay text="Opencv Text Overlay " ! videoconvert ! xvimagesink
- * ]|
- * </refsect2>
- */
-
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
